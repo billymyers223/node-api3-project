@@ -12,9 +12,7 @@ async function validateUserId(req, res, next) {
   try{
     const user = await User.getById(req.params.id)
     if(!user){
-      res.status(404).json({
-        message:"No such user",
-      })
+      next({status: 404, message: "user not found" })
     } else{
       req.user = user
       next()
@@ -22,20 +20,29 @@ async function validateUserId(req, res, next) {
   }
   catch (err){
 //later
+    next(err)
   }
-  next();
+
 }
 
 function validateUser(req, res, next) {
   // DO YOUR MAGIC
-  console.log(validateUser);
-  next();
+  const {name} = req.body
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    next({ status: 400, message: "missing required name field"})
+  } else {
+    next()
+  }
 }
 
 function validatePost(req, res, next) {
   // DO YOUR MAGIC
-  console.log(validatePost);
-  next();
+  const {text} = req.body
+  if(!text || typeof text !== 'string' || !text.trim()) {
+    next({ status: 400, message: "missing required text field"})
+  } else {
+    next()
+  }
 }
 
 // do not forget to expose these functions to other modules
